@@ -1,4 +1,9 @@
 //your JS code here.
+const questionsElement = document.getElementById("questions");
+const submitBtn = document.getElementById("submit");
+const scoreDisplay = document.getElementById("score");
+let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || [];
+
 
 // Do not change code below this line
 // This code will just display the questions to the screen
@@ -43,6 +48,12 @@ function renderQuestions() {
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${i}`);
       choiceElement.setAttribute("value", choice);
+
+	choiceElement.addEventListener("change", () => {
+	  userAnswers[i] = choice;
+	  sessionStorage.setItem("progress", JSON.stringify(userAnswers));
+	});
+		
       if (userAnswers[i] === choice) {
         choiceElement.setAttribute("checked", true);
       }
@@ -54,3 +65,18 @@ function renderQuestions() {
   }
 }
 renderQuestions();
+
+submitBtn.addEventListener("click", () => {
+  let score = 0;
+
+  for (let i = 0; i < questions.length; i++) {
+    if (userAnswers[i] === questions[i].answer) {
+      score++;
+    }
+  }
+
+  scoreDisplay.innerText = `Your score is ${score} out of ${questions.length}.`;
+  localStorage.setItem("score", score.toString());
+  sessionStorage.removeItem("progress");
+});
+
